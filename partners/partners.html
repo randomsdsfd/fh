@@ -182,7 +182,7 @@ function showToast(type, message) {
 
 // Discord login (replace client_id + redirect URL)
 loginBtn.addEventListener("click", () => {
-  const redirect = encodeURIComponent("https://spectacular-tulumba-4a03c0.netlify.app/api/auth/discord/callback");
+  const redirect = encodeURIComponent("https://app.bloxion.xyz/api/auth/discord/callback");
   window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1436072115299156058&redirect_uri=${redirect}&response_type=code&scope=identify`;
 });
 
@@ -226,5 +226,6 @@ form.addEventListener("submit", async (e) => {
 </script>
 </body>
 </html>
+
 
 
