@@ -189,7 +189,7 @@ loginBtn.addEventListener("click", () => {
 // Check login status (optional: via /api/me)
 (async () => {
   try {
-    const res = await fetch("/api/me");
+    const res = await fetch("/api/auth/me");
     if (res.ok) {
       const user = await res.json();
       showToast("success", `Logged in as ${user.username}`);
@@ -226,3 +226,4 @@ form.addEventListener("submit", async (e) => {
 </script>
 </body>
 </html>
+
