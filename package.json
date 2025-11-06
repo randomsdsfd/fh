@@ -1,0 +1,17 @@
+{
+  "name": "bloxion-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Nothing to build'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "typescript": "^5.3.3"
+  }
+}
