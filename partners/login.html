@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloxion Partners — Login</title>
+  <style>
+    body {
+      background: radial-gradient(circle at 20% 30%, #0e0e0f, #050505 70%);
+      color: #fff;
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(90deg, #00d2ff, #00ffa3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    button {
+      background: linear-gradient(90deg, #00d2ff, #00ffa3);
+      color: #0f0f0f;
+      border: none;
+      border-radius: 12px;
+      padding: 0.9rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 0.8rem;
+      color: #999;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body>
+  <h1>Bloxion Partners</h1>
+  <p>Log in with Discord to continue.</p>
+  <button id="discordLogin">Login with Discord</button>
+
+  <div class="footer">© 2025 Bloxion. All rights reserved.</div>
+
+  <script>
+    document.getElementById("discordLogin").addEventListener("click", () => {
+      const redirect = encodeURIComponent("https://app.bloxion.xyz/api/auth/discord/callback");
+      window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1436072115299156058&redirect_uri=${redirect}&response_type=code&scope=identify`;
+    });
+  </script>
+</body>
+</html>
