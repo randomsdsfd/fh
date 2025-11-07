@@ -66,7 +66,7 @@
   <script>
     // Check if logged in
     (async () => {
-      const res = await fetch("/api/auth/me");
+      const res = await fetch("/../api/auth/me");
       if (!res.ok) {
         window.location.href = "login.html";
         return;
@@ -93,3 +93,4 @@
   </script>
 </body>
 </html>
+
