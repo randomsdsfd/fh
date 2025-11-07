@@ -1,10 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import jwt from "jsonwebtoken";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-// Required: set this in your Vercel or .env file
-const WEBHOOK_URL = process.env.PARTNER_WEBHOOK_URL!;
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -27,21 +23,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       avatar_url: "https://app.bloxion.xyz/icon.png", // optional
       embeds: [
         {
-          title: "📝 New Partner Application",
+          title: "New Partner Application",
           color: 0x00d2ff,
           fields: [
             {
-              name: "👤 Discord User",
+              name: "Discord User",
               value: `${user.username}#${user.discriminator} (${user.id})`,
               inline: false,
             },
             {
-              name: "🏢 Roblox Group",
+              name: "Roblox Group",
               value: group,
               inline: false,
             },
             {
-              name: "💬 Reason for Joining",
+              name: "Reason for Joining",
               value: reason,
               inline: false,
             },
