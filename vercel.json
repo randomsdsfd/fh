@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/**/*.ts": {
-      "runtime": "nodejs@2.0.0"
+      "runtime": "nodejs@v25"
     }
   },
   "routes": [
