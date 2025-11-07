@@ -1,39 +1,56 @@
 import type { IncomingMessage, ServerResponse } from "http";
 import jwt from "jsonwebtoken";
 
-// we extend Node's base types so Vercel can still use them easily
+// helper function to make responses easier
+function json(res: ServerResponse, code: number, data: any) {
+  res.statusCode = code;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+}
+
 export default async function handler(
   req: IncomingMessage & { method?: string; headers: any; body?: any },
-  res: ServerResponse & {
-    status: (code: number) => ServerResponse;
-    json: (data: any) => void;
-  }
+  res: ServerResponse
 ) {
-  // only allow POST
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
+    return json(res, 405, { error: "Method not allowed" });
   }
 
-    // Verify JWT
-    let user;
-    try {
-      user = jwt.verify(cookie, process.env.JWT_SECRET!) as any;
-    } catch {
-      return res.status(401).json({ error: "Invalid or expired token" });
+  try {
+    // Extract cookie manually
+    const cookieHeader = req.headers.cookie || "";
+    const cookieMatch = cookieHeader.match(/bloxion_discord_token=([^;]+)/);
+    const token = cookieMatch ? cookieMatch[1] : null;
+
+    if (!token) {
+      return json(res, 401, { error: "Unauthorized (no cookie)" });
     }
 
-    const { group, reason } = req.body || {};
+    // Verify the JWT
+    let user: any;
+    try {
+      user = jwt.verify(token, process.env.JWT_SECRET!);
+    } catch {
+      return json(res, 401, { error: "Invalid or expired token" });
+    }
+
+    // Read body (Vercel auto-parses JSON; fallback to empty)
+    const chunks: Buffer[] = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const bodyRaw = Buffer.concat(chunks).toString();
+    const body = bodyRaw ? JSON.parse(bodyRaw) : {};
+
+    const { group, reason } = body;
     if (!group || !reason) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return json(res, 400, { error: "Missing required fields" });
     }
 
     const WEBHOOK_URL = process.env.WEBHOOK_URL!;
     if (!WEBHOOK_URL) {
-      return res.status(500).json({ error: "Webhook URL not configured" });
+      return json(res, 500, { error: "Webhook URL not configured" });
     }
 
-    // Build the webhook payload
+    // Build webhook payload
     const payload = {
       username: "Bloxion Partners",
       embeds: [
@@ -44,14 +61,10 @@ export default async function handler(
             {
               name: "👤 Discord User",
               value: `${user.username}#${user.discriminator} (${user.id})`,
-              inline: false,
             },
-            { name: "🏢 Roblox Group", value: group, inline: false },
-            { name: "💬 Reason", value: reason, inline: false },
+            { name: "🏢 Roblox Group", value: group },
+            { name: "💬 Reason", value: reason },
           ],
-          footer: {
-            text: "Bloxion Partner System • " + new Date().toLocaleString(),
-          },
           timestamp: new Date().toISOString(),
         },
       ],
@@ -67,15 +80,12 @@ export default async function handler(
     if (!webhookResponse.ok) {
       const errText = await webhookResponse.text();
       console.error("Webhook error:", errText);
-      return res.status(500).json({ error: "Failed to send webhook" });
+      return json(res, 500, { error: "Failed to send webhook" });
     }
 
-    // All good
-    res.status(200).json({ success: true });
+    return json(res, 200, { success: true });
   } catch (err) {
     console.error("Partner form error:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return json(res, 500, { error: "Internal Server Error" });
   }
 }
-
-
