@@ -59,11 +59,11 @@ export default async function handler(
           color: 0x00d2ff,
           fields: [
             {
-              name: "👤 Discord User",
+              name: "Discord User",
               value: `${user.username}#${user.discriminator} (${user.id})`,
             },
-            { name: "🏢 Roblox Group", value: group },
-            { name: "💬 Reason", value: reason },
+            { name: "Roblox Group", value: group },
+            { name: "Reason", value: reason },
           ],
           timestamp: new Date().toISOString(),
         },
@@ -89,3 +89,4 @@ export default async function handler(
     return json(res, 500, { error: "Internal Server Error" });
   }
 }
+
