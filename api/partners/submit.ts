@@ -1,56 +1,64 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import jwt from "jsonwebtoken";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Only allow POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    // Check if user is authenticated via cookie
-    const cookie = req.headers.cookie?.split("bloxion_discord_token=")[1]?.split(";")[0];
-    if (!cookie) return res.status(401).json({ error: "Unauthorized" });
+    // Check authentication cookie
+    const cookie = req.headers.cookie
+      ?.split("bloxion_discord_token=")[1]
+      ?.split(";")[0];
+    if (!cookie) {
+      return res.status(401).json({ error: "Unauthorized (no cookie)" });
+    }
 
-    const user = jwt.verify(cookie, process.env.JWT_SECRET!) as any;
+    // Verify JWT
+    let user;
+    try {
+      user = jwt.verify(cookie, process.env.JWT_SECRET!) as any;
+    } catch {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
 
-    const { group, reason } = req.body;
+    const { group, reason } = req.body || {};
     if (!group || !reason) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Build the Discord webhook payload
+    const WEBHOOK_URL = process.env.WEBHOOK_URL!;
+    if (!WEBHOOK_URL) {
+      return res.status(500).json({ error: "Webhook URL not configured" });
+    }
+
+    // Build the webhook payload
     const payload = {
       username: "Bloxion Partners",
-      avatar_url: "https://app.bloxion.xyz/icon.png", // optional
       embeds: [
         {
-          title: "New Partner Application",
+          title: "📝 New Partner Application",
           color: 0x00d2ff,
           fields: [
             {
-              name: "Discord User",
+              name: "👤 Discord User",
               value: `${user.username}#${user.discriminator} (${user.id})`,
               inline: false,
             },
-            {
-              name: "Roblox Group",
-              value: group,
-              inline: false,
-            },
-            {
-              name: "Reason for Joining",
-              value: reason,
-              inline: false,
-            },
+            { name: "🏢 Roblox Group", value: group, inline: false },
+            { name: "💬 Reason", value: reason, inline: false },
           ],
           footer: {
-            text: "Bloxion Partner Requests • " + new Date().toLocaleString(),
+            text: "Bloxion Partner System • " + new Date().toLocaleString(),
           },
           timestamp: new Date().toISOString(),
         },
       ],
     };
 
-    // Send the webhook
+    // Send to Discord webhook
     const webhookResponse = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -58,10 +66,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     if (!webhookResponse.ok) {
-      console.error("Failed to send webhook:", await webhookResponse.text());
+      const errText = await webhookResponse.text();
+      console.error("Webhook error:", errText);
       return res.status(500).json({ error: "Failed to send webhook" });
     }
 
+    // All good
     res.status(200).json({ success: true });
   } catch (err) {
     console.error("Partner form error:", err);
