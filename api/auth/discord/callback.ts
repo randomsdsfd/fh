@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         client_secret: process.env.DISCORD_CLIENT_SECRET!,
         grant_type: "authorization_code",
         code,
-        redirect_uri: "https://app.bloxion.xyz/api/auth/discord/callback.ts",
+        redirect_uri: "https://app.bloxion.xyz/api/auth/discord/callback",
       }),
     });
 
@@ -43,4 +43,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: "OAuth callback failed" });
   }
 }
+
 
