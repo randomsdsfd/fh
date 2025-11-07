@@ -1,20 +1,19 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { IncomingMessage, ServerResponse } from "http";
 import jwt from "jsonwebtoken";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Only allow POST
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+// we extend Node's base types so Vercel can still use them easily
+export default async function handler(
+  req: IncomingMessage & { method?: string; headers: any; body?: any },
+  res: ServerResponse & {
+    status: (code: number) => ServerResponse;
+    json: (data: any) => void;
   }
-
-  try {
-    // Check authentication cookie
-    const cookie = req.headers.cookie
-      ?.split("bloxion_discord_token=")[1]
-      ?.split(";")[0];
-    if (!cookie) {
-      return res.status(401).json({ error: "Unauthorized (no cookie)" });
-    }
+) {
+  // only allow POST
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
 
     // Verify JWT
     let user;
@@ -78,3 +77,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+
