@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bloxion Partners — Request Sent</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --accent1: #00d2ff;
+  --accent2: #00ffa3;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(circle at 20% 30%, #0e0e0f, #050505 70%);
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* gradient glow orbs */
+.orb {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.18;
+  animation: float 12s ease-in-out infinite alternate;
+}
+.orb.one { background: var(--accent1); top: 10%; left: 12%; }
+.orb.two { background: var(--accent2); bottom: 20%; right: 15%; animation-delay: 2s; }
+
+@keyframes float {
+  0% { transform: translateY(0px) scale(1); opacity: 0.18; }
+  100% { transform: translateY(-40px) scale(1.05); opacity: 0.3; }
+}
+
+.container {
+  text-align: center;
+  z-index: 2;
+  animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.8rem;
+}
+
+p {
+  color: #bfbfbf;
+  font-size: 1rem;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+button {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  border: none;
+  border-radius: 12px;
+  color: #0f0f0f;
+  font-weight: 600;
+  padding: 0.9rem 1.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.3s, transform 0.15s;
+}
+button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 0.9rem 0;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+  color: #999;
+}
+</style>
+</head>
+<body>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
+  <div class="container">
+    <h1>Request Sent</h1>
+    <p>Your partnership request has been successfully submitted.<br>
+    Our team will review your application soon — thank you for your interest in joining the Bloxion Partner Program.</p>
+    <button onclick="window.location.href='https://bloxion.xyz'">Return to Home</button>
+  </div>
+
+  <div class="footer">© 2025 Bloxion. All rights reserved.</div>
+</body>
+</html>
